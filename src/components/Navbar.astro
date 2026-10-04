@@ -1,0 +1,126 @@
+---
+interface Props {
+  cvUrl?: string;
+}
+
+const { cvUrl = "/cv.pdf" } = Astro.props;
+---
+
+<header class="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 sm:px-6 pt-3 pointer-events-none">
+  <!-- iOS 27 Liquid Droplet Capsule -->
+  <nav 
+    id="iosNavbar" 
+    class="pointer-events-auto relative flex items-center justify-between gap-3 sm:gap-6 px-4 sm:px-6 py-2.5 rounded-full ios-droplet max-w-4xl w-full transition-all duration-500 hover:border-white/30 group"
+  >
+    <!-- Liquid Edge Highlight Reflection -->
+    <div class="absolute inset-x-8 -top-px h-px bg-gradient-to-r from-transparent via-white/70 to-transparent pointer-events-none"></div>
+
+    <!-- Brand / Monogram (data-reveal: entra con fade al cargar la página) -->
+    <a href="#" data-reveal data-reveal-delay="0" class="flex items-center gap-2.5 group/brand focus:outline-none" aria-label="Inicio">
+      <img 
+        src="/brand/bm.png" 
+        alt="" 
+        width={32} 
+        height={32} 
+        decoding="async"
+        class="drop-shadow-[0_2px_8px_rgba(255,255,255,0.25)] transition-transform duration-500 group-hover/brand:scale-105"
+      />
+      <div class="flex flex-col">
+        <span class="font-display font-bold text-sm tracking-wider text-white uppercase group-hover/brand:text-zinc-200 transition-colors">
+          BERNARDO MILLÁN
+        </span>
+        <span class="font-mono-tech text-[9px] tracking-widest text-zinc-400 uppercase -mt-0.5">
+          IT // 3D LAB
+        </span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation Links -->
+    <div data-reveal data-reveal-delay="60" class="hidden md:flex items-center gap-6 text-xs font-medium tracking-wide">
+      <a 
+        href="#perfil" 
+        class="text-zinc-300 hover:text-white transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-white hover:after:w-full after:transition-all"
+      >
+        Perfil & CV
+      </a>
+      <a 
+        href="#proyectos" 
+        class="flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors relative py-1 group/proj"
+      >
+        <span>Proyectos 3D</span>
+        <span class="font-mono-tech text-[9px] px-1.5 py-0.5 rounded-full bg-white/10 text-zinc-200 border border-white/15 group-hover/proj:border-white/30 transition-colors">
+          @capsulecorp.3d
+        </span>
+      </a>
+      <a 
+        href="#contacto" 
+        class="text-zinc-300 hover:text-white transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-white hover:after:w-full after:transition-all"
+      >
+        Contacto
+      </a>
+    </div>
+
+    <!-- Right Actions: Descargar CV & Mobile Menu Trigger -->
+    <div data-reveal data-reveal-delay="120" class="flex items-center gap-2 sm:gap-3">
+      <a 
+        href={cvUrl} 
+        download 
+        class="btn-chrome flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide shadow-md shadow-black/50"
+        title="Descargar Curriculum Vitae en PDF"
+      >
+        <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+        <span class="hidden sm:inline">Descargar CV</span>
+        <span class="sm:hidden">CV</span>
+      </a>
+
+      <!-- Mobile Hamburger Button -->
+      <button 
+        id="mobileMenuBtn" 
+        type="button" 
+        class="md:hidden p-1.5 rounded-full text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors focus:outline-none"
+        aria-label="Abrir menú"
+      >
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
+        </svg>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Dropdown Menu -->
+  <div 
+    id="mobileMenu" 
+    class="hidden pointer-events-auto absolute top-16 inset-x-4 max-w-sm mx-auto p-5 rounded-2xl ios-droplet flex flex-col gap-4 text-sm font-medium z-50 animate-in fade-in zoom-in-95 duration-200"
+  >
+    <a href="#perfil" class="text-zinc-200 hover:text-white py-1 mobile-link">Perfil & Historia</a>
+    <a href="#proyectos" class="flex items-center justify-between text-zinc-200 hover:text-white py-1 mobile-link">
+      <span>Proyectos 3D</span>
+      <span class="font-mono-tech text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-zinc-300">@capsulecorp.3d</span>
+    </a>
+    <a href="#contacto" class="text-zinc-200 hover:text-white py-1 mobile-link">Contacto</a>
+    <div class="pt-2 border-t border-white/10 flex items-center justify-between">
+      <span class="font-mono-tech text-[10px] text-zinc-400">DISPONIBLE // IT SEEKER</span>
+      <a href={cvUrl} download class="btn-chrome px-3 py-1.5 rounded-full text-xs font-bold">
+        Descargar CV PDF
+      </a>
+    </div>
+  </div>
+</header>
+
+<script>
+  const btn = document.getElementById('mobileMenuBtn');
+  const menu = document.getElementById('mobileMenu');
+  const links = document.querySelectorAll('.mobile-link');
+
+  btn?.addEventListener('click', () => {
+    menu?.classList.toggle('hidden');
+  });
+
+  links.forEach(link => {
+    link.addEventListener('click', () => {
+      menu?.classList.add('hidden');
+    });
+  });
+</script>

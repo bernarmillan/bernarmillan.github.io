@@ -1,0 +1,290 @@
+---
+import { personalInfo } from '../data/portfolio';
+
+interface Props {
+  email?: string;
+  phone?: string;
+  linkedin?: string;
+  github?: string;
+  instagramUrl?: string;
+  cvUrl?: string;
+}
+
+const {
+  email = personalInfo.email,
+  linkedin = personalInfo.linkedin,
+  github = personalInfo.github,
+  instagramUrl = personalInfo.instagramUrl,
+  cvUrl = personalInfo.cvUrl
+} = Astro.props;
+---
+
+<section id="contacto" class="relative py-24 px-4 sm:px-6 md:px-8 max-w-6xl mx-auto border-t border-white/10">
+  <!-- Ambient background glow -->
+  <div class="ambient-glow absolute bottom-0 right-10 w-80 h-80 bg-white/[0.02] rounded-full blur-3xl pointer-events-none"></div>
+
+  <!-- Header -->
+  <div data-reveal class="flex flex-col items-center text-center max-w-2xl mx-auto mb-16">
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 font-mono-tech text-[11px] text-zinc-300 uppercase tracking-widest mb-3">
+      <span class="w-1.5 h-1.5 rounded-full bg-white animate-ping"></span>
+      <span>DISPONIBILIDAD INMEDIATA // CONTACTO</span>
+    </div>
+
+    <h2 class="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight uppercase">
+      INICIEMOS CONVERSACIÓN
+    </h2>
+    <p class="text-sm sm:text-base text-zinc-400 font-sans mt-3 leading-relaxed">
+      Abierto a propuestas profesionales en soporte IT, técnico de sistemas, helpdesk o encargos especiales en @capsulecorp.3d.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+    <!-- Left: Direct Channels & Social Hub (5 cols) -->
+    <div data-reveal class="lg:col-span-5 space-y-4">
+      <!-- Status Card -->
+      <div class="glass-card p-4 rounded-xl border border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <span class="relative flex h-2.5 w-2.5">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></span>
+          </span>
+          <div>
+            <span class="text-[10px] font-mono-tech text-zinc-400 uppercase tracking-wider block">Estado de Búsqueda</span>
+            <span class="text-xs font-semibold text-white">Activa para incorporación inmediata</span>
+          </div>
+        </div>
+        <span class="font-mono-tech text-[10px] px-2 py-0.5 rounded bg-white/10 text-zinc-300">IT & SMR</span>
+      </div>
+
+      <!-- Email Card with Copy Trigger -->
+      <div class="glass-card p-4 rounded-xl border border-white/10 flex items-center justify-between group">
+        <div class="flex items-center gap-3 min-w-0">
+          <div class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 group-hover:bg-white/10 transition-colors">
+            <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+          </div>
+          <div class="min-w-0">
+            <span class="text-[10px] font-mono-tech text-zinc-400 uppercase tracking-wider block">Correo Electrónico</span>
+            <a href={`mailto:${email}`} class="text-xs font-semibold text-white hover:underline truncate block">
+              {email}
+            </a>
+          </div>
+        </div>
+
+        <button 
+          id="copyEmailCardBtn" 
+          type="button" 
+          data-email={email}
+          class="font-mono-tech text-[11px] px-2.5 py-1 rounded-md bg-white/10 hover:bg-white text-zinc-200 hover:text-black transition-colors shrink-0"
+        >
+          Copiar
+        </button>
+      </div>
+
+      <!-- Instagram Capsule Corp Direct Card -->
+      <a 
+        href={instagramUrl} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="glass-card p-4 rounded-xl border border-white/10 hover:border-white/30 flex items-center justify-between transition-all group"
+      >
+        <div class="flex items-center gap-3">
+          <div class="w-9 h-9 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white shrink-0 group-hover:bg-white/10 transition-colors">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+            </svg>
+          </div>
+          <div>
+            <span class="text-[10px] font-mono-tech text-zinc-400 uppercase tracking-wider block">Instagram 3D</span>
+            <span class="text-xs font-semibold text-white group-hover:text-zinc-200">@capsulecorp.3d</span>
+          </div>
+        </div>
+        <svg class="w-4 h-4 text-zinc-500 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+        </svg>
+      </a>
+
+      <!-- LinkedIn & GitHub Row -->
+      <div class="grid grid-cols-2 gap-3">
+        <a 
+          href={linkedin} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="glass-card p-3.5 rounded-xl border border-white/10 hover:border-white/30 flex items-center justify-between text-xs font-semibold text-white transition-all group"
+        >
+          <span>LinkedIn</span>
+          <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+
+        <a 
+          href={github} 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="glass-card p-3.5 rounded-xl border border-white/10 hover:border-white/30 flex items-center justify-between text-xs font-semibold text-white transition-all group"
+        >
+          <span>GitHub</span>
+          <svg class="w-3.5 h-3.5 text-zinc-400 group-hover:text-white transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+          </svg>
+        </a>
+      </div>
+
+      <!-- CV Download Capsule -->
+      <div class="pt-2">
+        <a 
+          href={cvUrl} 
+          download 
+          class="btn-chrome w-full flex items-center justify-center gap-2 py-3 rounded-xl text-xs font-bold tracking-wider uppercase"
+        >
+          <svg class="w-4 h-4 stroke-[2.2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+          </svg>
+          <span>Descargar Currículum Vitae (PDF)</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Right: High-contrast Contact Form (7 cols) -->
+    <div data-reveal data-reveal-delay="90" class="lg:col-span-7">
+      <form 
+        id="contact-form"
+        action="https://formsubmit.co/bernarmillan@gmail.com" 
+        method="POST" 
+        class="glass-card p-6 sm:p-8 rounded-2xl border border-white/10 space-y-4"
+      >
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="contact-name" class="block font-mono-tech text-[10px] uppercase tracking-wider text-zinc-400 mb-1.5">
+              Tu Nombre / Empresa
+            </label>
+            <input 
+              type="text" 
+              id="contact-name" 
+              name="name" 
+              required 
+              placeholder="Ej: Reclutador / Empresa IT" 
+              class="w-full px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/15 text-white placeholder-zinc-500 text-xs focus:border-white focus:outline-none transition-colors"
+            />
+          </div>
+
+          <div>
+            <label for="contact-email" class="block font-mono-tech text-[10px] uppercase tracking-wider text-zinc-400 mb-1.5">
+              Tu Email de Contacto
+            </label>
+            <input 
+              type="email" 
+              id="contact-email" 
+              name="email" 
+              required 
+              placeholder="tu@empresa.com" 
+              class="w-full px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/15 text-white placeholder-zinc-500 text-xs focus:border-white focus:outline-none transition-colors"
+            />
+          </div>
+        </div>
+
+        <div>
+          <label for="contact-subject" class="block font-mono-tech text-[10px] uppercase tracking-wider text-zinc-400 mb-1.5">
+            Asunto / Motivo
+          </label>
+          <input 
+            type="text" 
+            id="contact-subject" 
+            name="subject" 
+            placeholder="Oportunidad laboral IT / Soporte / Fabricación 3D" 
+            class="w-full px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/15 text-white placeholder-zinc-500 text-xs focus:border-white focus:outline-none transition-colors"
+          />
+        </div>
+
+        <div>
+          <label for="contact-message" class="block font-mono-tech text-[10px] uppercase tracking-wider text-zinc-400 mb-1.5">
+            Mensaje
+          </label>
+          <textarea 
+            id="contact-message" 
+            name="message" 
+            rows="4" 
+            required 
+            placeholder="Cuéntame sobre la vacante o proyecto..."
+            class="w-full px-3.5 py-2.5 rounded-lg bg-black/60 border border-white/15 text-white placeholder-zinc-500 text-xs focus:border-white focus:outline-none transition-colors resize-none"
+          ></textarea>
+        </div>
+
+        <input type="hidden" name="_captcha" value="false" />
+        <input type="hidden" name="_honey" />
+
+        <button 
+          type="submit" 
+          class="btn-chrome w-full py-3 rounded-lg text-xs font-bold tracking-wider uppercase transition-transform active:scale-[0.99]"
+        >
+          Enviar Mensaje Directo
+        </button>
+
+        <!-- Confirmación del envío: el visitante no sale de la web -->
+        <p id="form-status" role="status" aria-live="polite" class="hidden text-xs font-mono-tech text-center mt-1"></p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Script for copy email card -->
+<script>
+  const copyCardBtn = document.getElementById('copyEmailCardBtn');
+  copyCardBtn?.addEventListener('click', async () => {
+    const email = copyCardBtn.getAttribute('data-email') || 'bernar.millan@gmail.com';
+    try {
+      await navigator.clipboard.writeText(email);
+      copyCardBtn.textContent = '✓ Copiado';
+      setTimeout(() => {
+        copyCardBtn.textContent = 'Copiar';
+      }, 2000);
+    } catch (e) {
+      window.location.href = `mailto:${email}`;
+    }
+  });
+</script>
+
+<!-- Envío AJAX: muestra «✓ Mensaje enviado» sin salir de la web.
+     Sin JS (o si fetch falla) se usa el action/method normales del formulario. -->
+<script>
+  const formEnvio = document.getElementById('contact-form');
+  const estadoEnvio = document.getElementById('form-status');
+  const botonEnvio = formEnvio ? formEnvio.querySelector('button[type="submit"]') : null;
+
+  formEnvio?.addEventListener('submit', async (e) => {
+    // Si la validación nativa falla o no hay fetch, no interceptamos nada.
+    if (!formEnvio.checkValidity() || typeof fetch !== 'function') return;
+    e.preventDefault();
+
+    const textoOriginal = botonEnvio.textContent;
+    botonEnvio.disabled = true;
+    botonEnvio.textContent = 'Enviando…';
+    estadoEnvio.className = 'hidden';
+    estadoEnvio.textContent = '';
+
+    try {
+      const r = await fetch('https://formsubmit.co/ajax/bernarmillan@gmail.com', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        // Incluye _captcha=false y _honey del propio formulario.
+        body: JSON.stringify(Object.fromEntries(new FormData(formEnvio).entries()))
+      });
+      const datos = await r.json();
+      if (!r.ok || String(datos.success) !== 'true') throw new Error('HTTP ' + r.status);
+      formEnvio.reset();
+      estadoEnvio.textContent = '✓ Mensaje enviado — te contesto lo antes posible';
+      estadoEnvio.className = 'text-xs font-mono-tech text-center mt-1 text-emerald-400';
+    } catch (err) {
+      // Red caída o servicio fuera: envío normal (action del formulario) para
+      // que el mensaje no se pierda. HTMLFormElement.submit() no dispara el
+      // evento 'submit', así que no hay bucle.
+      HTMLFormElement.prototype.submit.call(formEnvio);
+      return;
+    }
+
+    botonEnvio.disabled = false;
+    botonEnvio.textContent = textoOriginal;
+  });
+</script>

@@ -1,0 +1,304 @@
+---
+interface ShowcaseItem {
+  id: number;
+  title: string;
+  category: string;
+  software: string;
+  material: string;
+  renderImage: string;
+  realImage: string;
+  description: string;
+  highlights: string[];
+}
+
+interface Props {
+  items: ShowcaseItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<section id="trabajo-3d" class="py-16 md:py-24 px-4 sm:px-6 bg-slate-50 border-t border-slate-200/60">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-600 mb-2">Showcase de Fabricación</h2>
+      <h3 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+        Del Render a la Realidad
+      </h3>
+      <p class="text-slate-600 text-sm sm:text-base mt-2">
+        Alterna entre el modelo CAD paramétrico digital y la pieza física final impresa
+      </p>
+      <div class="w-12 h-1 bg-cyan-500 rounded-full mx-auto mt-4"></div>
+    </div>
+
+    <!-- Carousel Container -->
+    <div class="relative bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden" id="carousel-root">
+      
+      <!-- Slides wrapper -->
+      <div class="relative overflow-hidden min-h-[460px]">
+        {items.map((item, index) => (
+          <div 
+            class={`carousel-slide transition-opacity duration-300 ${index === 0 ? 'block opacity-100' : 'hidden opacity-0'}`}
+            data-slide-index={index}
+          >
+            <div class="grid lg:grid-cols-12 gap-6 p-6 sm:p-8 md:p-10 items-center">
+              
+              <!-- Visual Box (Render vs Real Photo) -->
+              <div class="lg:col-span-7 flex flex-col items-center">
+                <!-- Toggle Switch -->
+                <div class="inline-flex p-1 bg-slate-100 rounded-xl mb-4 border border-slate-200 shadow-inner" role="tablist">
+                  <button 
+                    type="button"
+                    class="view-toggle-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all active bg-white text-slate-900 shadow-sm"
+                    data-target-view="render"
+                    data-slide={index}
+                    role="tab"
+                    aria-selected="true"
+                  >
+                    📐 Render CAD
+                  </button>
+                  <button 
+                    type="button"
+                    class="view-toggle-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-all text-slate-500 hover:text-slate-900"
+                    data-target-view="real"
+                    data-slide={index}
+                    role="tab"
+                    aria-selected="false"
+                  >
+                    🖨️ Pieza Impresa
+                  </button>
+                </div>
+
+                <!-- Image Frame with Fade Transition -->
+                <div class="relative w-full aspect-[4/3] rounded-2xl overflow-hidden bg-slate-950 border border-slate-200 shadow-inner">
+                  <!-- Render Image -->
+                  <img 
+                    src={item.renderImage} 
+                    alt={`Render CAD 3D de ${item.title}`}
+                    class="slide-img-render w-full h-full object-cover transition-opacity duration-300"
+                    data-slide={index}
+                    loading="lazy"
+                  />
+                  <!-- Real Photo (hidden by default) -->
+                  <img 
+                    src={item.realImage} 
+                    alt={`Pieza real impresa de ${item.title}`}
+                    class="slide-img-real absolute inset-0 w-full h-full object-cover opacity-0 pointer-events-none transition-opacity duration-300"
+                    data-slide={index}
+                    loading="lazy"
+                  />
+                </div>
+
+                <!-- Helper tip under image -->
+                <p class="text-[11px] text-slate-400 mt-2 text-center">
+                  💡 Pulsa en los botones superiores para comparar el diseño digital con la pieza final
+                </p>
+              </div>
+
+              <!-- Technical Details Column -->
+              <div class="lg:col-span-5 flex flex-col justify-between pt-4 lg:pt-0">
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-xs font-semibold px-2.5 py-1 rounded-md bg-cyan-50 text-cyan-800 border border-cyan-200/60">
+                      {item.category}
+                    </span>
+                    <span class="text-xs text-slate-400 font-mono">
+                      #{index + 1} de {items.length}
+                    </span>
+                  </div>
+
+                  <h4 class="text-xl sm:text-2xl font-bold text-slate-900 mb-3">
+                    {item.title}
+                  </h4>
+
+                  <p class="text-sm text-slate-600 leading-relaxed mb-6">
+                    {item.description}
+                  </p>
+
+                  <!-- Technical Specs Pills -->
+                  <div class="grid grid-cols-2 gap-3 mb-6 p-4 rounded-xl bg-slate-50 border border-slate-100 text-xs">
+                    <div>
+                      <span class="text-slate-400 block font-medium mb-0.5">Software CAD</span>
+                      <span class="font-semibold text-slate-800">{item.software}</span>
+                    </div>
+                    <div>
+                      <span class="text-slate-400 block font-medium mb-0.5">Material de impresión</span>
+                      <span class="font-semibold text-slate-800">{item.material}</span>
+                    </div>
+                  </div>
+
+                  <!-- Highlights List -->
+                  <div class="space-y-2 mb-6">
+                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block">
+                      Detalles de fabricación:
+                    </span>
+                    {item.highlights.map(h => (
+                      <div class="flex items-center gap-2 text-xs sm:text-sm text-slate-700">
+                        <svg class="w-4 h-4 text-cyan-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        <span>{h}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Carousel Navigation Bottom Bar -->
+      <div class="px-6 py-4 bg-slate-50/80 border-t border-slate-100 flex items-center justify-between">
+        <!-- Prev Button -->
+        <button 
+          id="carousel-prev" 
+          type="button" 
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-xs sm:text-sm font-semibold transition-all shadow-sm"
+          aria-label="Pieza anterior"
+        >
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          <span class="hidden sm:inline">Anterior</span>
+        </button>
+
+        <!-- Dots Indicator -->
+        <div class="flex items-center gap-2" id="carousel-dots">
+          {items.map((_, i) => (
+            <button 
+              type="button" 
+              class={`w-2.5 h-2.5 rounded-full transition-all carousel-dot ${i === 0 ? 'bg-cyan-600 w-6' : 'bg-slate-300'}`}
+              data-dot-index={i}
+              aria-label={`Ir a la pieza ${i + 1}`}
+            ></button>
+          ))}
+        </div>
+
+        <!-- Next Button -->
+        <button 
+          id="carousel-next" 
+          type="button" 
+          class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:text-slate-900 hover:bg-slate-100 text-xs sm:text-sm font-semibold transition-all shadow-sm"
+          aria-label="Pieza siguiente"
+        >
+          <span class="hidden sm:inline">Siguiente</span>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+          </svg>
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<script is:inline>
+  document.addEventListener('DOMContentLoaded', () => {
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-slide');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const totalSlides = slides.length;
+    const prevBtn = document.getElementById('carousel-prev');
+    const nextBtn = document.getElementById('carousel-next');
+
+    function goToSlide(index) {
+      if (index < 0) index = totalSlides - 1;
+      if (index >= totalSlides) index = 0;
+
+      slides.forEach((slide, i) => {
+        if (i === index) {
+          slide.classList.remove('hidden');
+          setTimeout(() => slide.classList.add('opacity-100'), 20);
+        } else {
+          slide.classList.remove('opacity-100');
+          slide.classList.add('hidden');
+        }
+      });
+
+      dots.forEach((dot, i) => {
+        if (i === index) {
+          dot.classList.add('bg-cyan-600', 'w-6');
+          dot.classList.remove('bg-slate-300');
+        } else {
+          dot.classList.remove('bg-cyan-600', 'w-6');
+          dot.classList.add('bg-slate-300');
+        }
+      });
+
+      currentSlide = index;
+    }
+
+    if (prevBtn) prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
+
+    dots.forEach(dot => {
+      dot.addEventListener('click', (e) => {
+        const idx = parseInt(e.currentTarget.getAttribute('data-dot-index') || '0', 10);
+        goToSlide(idx);
+      });
+    });
+
+    // Toggle CAD vs Real image
+    const toggleButtons = document.querySelectorAll('.view-toggle-btn');
+    toggleButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const targetView = e.currentTarget.getAttribute('data-target-view');
+        const slideIndex = e.currentTarget.getAttribute('data-slide');
+        
+        // Update button styles in that slide
+        const parentSlide = e.currentTarget.closest('.carousel-slide');
+        const siblingButtons = parentSlide.querySelectorAll('.view-toggle-btn');
+        siblingButtons.forEach(b => {
+          b.classList.remove('bg-white', 'text-slate-900', 'shadow-sm');
+          b.classList.add('text-slate-500');
+          b.setAttribute('aria-selected', 'false');
+        });
+        e.currentTarget.classList.add('bg-white', 'text-slate-900', 'shadow-sm');
+        e.currentTarget.classList.remove('text-slate-500');
+        e.currentTarget.setAttribute('aria-selected', 'true');
+
+        // Update image visibility in that slide
+        const renderImg = parentSlide.querySelector('.slide-img-render');
+        const realImg = parentSlide.querySelector('.slide-img-real');
+
+        if (targetView === 'render') {
+          renderImg.classList.remove('opacity-0', 'pointer-events-none');
+          realImg.classList.add('opacity-0', 'pointer-events-none');
+        } else {
+          renderImg.classList.add('opacity-0', 'pointer-events-none');
+          realImg.classList.remove('opacity-0', 'pointer-events-none');
+        }
+      });
+    });
+
+    // Touch swipe support for mobile
+    const root = document.getElementById('carousel-root');
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    if (root) {
+      root.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      root.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        handleSwipe();
+      }, { passive: true });
+    }
+
+    function handleSwipe() {
+      const diff = touchStartX - touchEndX;
+      if (Math.abs(diff) > 50) {
+        if (diff > 0) {
+          goToSlide(currentSlide + 1); // Swipe left
+        } else {
+          goToSlide(currentSlide - 1); // Swipe right
+        }
+      }
+    }
+  });
+</script>

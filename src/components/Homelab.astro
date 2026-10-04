@@ -1,0 +1,133 @@
+---
+interface Pillar {
+  title: string;
+  desc: string;
+}
+
+interface Props {
+  homelab: {
+    title: string;
+    badge: string;
+    tagline: string;
+    summary: string;
+    itPillars: Pillar[];
+    makerPillars: Pillar[];
+    techStack: string[];
+  };
+}
+
+const { homelab } = Astro.props;
+---
+
+<section id="homelab" class="py-16 md:py-24 px-4 sm:px-6 bg-white border-t border-slate-200/60">
+  <div class="max-w-6xl mx-auto">
+    <!-- Header -->
+    <div class="text-center max-w-3xl mx-auto mb-12">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200/80 mb-3">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span>{homelab.badge}</span>
+      </div>
+      <h2 class="text-xs font-bold uppercase tracking-widest text-cyan-600 mb-2">Proyecto Destacado</h2>
+      <h3 class="text-2xl sm:text-3xl md:text-4xl font-extrabold text-slate-900 tracking-tight">
+        {homelab.title}
+      </h3>
+      <p class="text-slate-600 text-base sm:text-lg mt-3">
+        {homelab.tagline}
+      </p>
+      <div class="w-12 h-1 bg-cyan-500 rounded-full mx-auto mt-4"></div>
+    </div>
+
+    <!-- Summary Box -->
+    <div class="bg-gradient-to-br from-slate-900 via-slate-850 to-slate-900 text-white rounded-2xl p-6 sm:p-8 md:p-10 shadow-xl mb-12 border border-slate-800 relative overflow-hidden">
+      <!-- Glow background -->
+      <div class="absolute -right-16 -top-16 w-64 h-64 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
+      <div class="relative z-10 max-w-3xl">
+        <p class="text-sm uppercase tracking-wider text-cyan-400 font-semibold mb-2">Objetivo del Laboratorio</p>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-6 font-light">
+          {homelab.summary}
+        </p>
+
+        <!-- Tech Stack Pills -->
+        <div class="flex flex-wrap gap-2 pt-2">
+          {homelab.techStack.map(tech => (
+            <span class="px-3 py-1 bg-slate-800/90 border border-slate-700/80 text-cyan-300 text-xs sm:text-sm font-medium rounded-lg">
+              {tech}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- 2 Dual Columns: IT vs 3D -->
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Left: IT Infrastructure -->
+      <div class="p-6 sm:p-8 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+            <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-700 flex items-center justify-center text-xl">
+              💻
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-lg">Capa IT & Servicios</h4>
+              <p class="text-xs text-slate-500">Virtualización, redes y gestión del sistema</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            {homelab.itPillars.map((item, index) => (
+              <div class="flex gap-3 items-start">
+                <span class="w-5 h-5 rounded-full bg-blue-100 text-blue-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                  {index + 1}
+                </span>
+                <div>
+                  <h5 class="text-sm font-bold text-slate-800">{item.title}</h5>
+                  <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-0.5">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-200/80 text-xs text-slate-500 flex items-center justify-between">
+          <span>Enfoque: Resiliencia y aislamiento</span>
+          <span class="font-semibold text-blue-600">Proxmox + Docker</span>
+        </div>
+      </div>
+
+      <!-- Right: 3D Physical Rack -->
+      <div class="p-6 sm:p-8 rounded-2xl bg-slate-50 border border-slate-200/90 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center gap-3 mb-6 pb-4 border-b border-slate-200">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center text-xl">
+              📐
+            </div>
+            <div>
+              <h4 class="font-bold text-slate-900 text-lg">Capa Física & Fabricación 3D</h4>
+              <p class="text-xs text-slate-500">Diseño CAD paramétrico y piezas impresas</p>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            {homelab.makerPillars.map((item, index) => (
+              <div class="flex gap-3 items-start">
+                <span class="w-5 h-5 rounded-full bg-amber-100 text-amber-700 text-xs font-bold flex items-center justify-center flex-shrink-0 mt-0.5">
+                  {index + 1}
+                </span>
+                <div>
+                  <h5 class="text-sm font-bold text-slate-800">{item.title}</h5>
+                  <p class="text-xs sm:text-sm text-slate-600 leading-relaxed mt-0.5">{item.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-slate-200/80 text-xs text-slate-500 flex items-center justify-between">
+          <span>Enfoque: Tolerancias y flujo térmico</span>
+          <span class="font-semibold text-amber-600">Fusion 360 + PETG</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

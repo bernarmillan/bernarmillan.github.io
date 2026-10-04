@@ -1,0 +1,517 @@
+---
+// Las fuentes se declaran con @font-face en el <style is:global> de abajo:
+// ruta estable en /fonts (generada con `npm run fonts`), solo el subconjunto
+// latino y preload en <head> para que estén antes del primer pintado.
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+}
+
+const { 
+  title, 
+  description = "Bernardo Millán — Técnico en Sistemas Microinformáticos y Redes (SMR) con más de 8 años de trayectoria en retail textil y encargado de tienda. En búsqueda activa en IT y diseñador en @capsulecorp.3d.",
+  image = "/images/avatar.jpg"
+} = Astro.props;
+
+const siteUrl = "https://bernardomillan.is-a.dev";
+const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+---
+
+<!doctype html>
+<html lang="es" class="scroll-smooth bg-[#060606] text-[#eaeaea]">
+  <head>
+    <meta charset="utf-8" />
+    <!-- Progressive enhancement: si el JS falla o está desactivado esta clase no se
+         añade, la regla .js-reveal [data-reveal] no aplica y todo se ve normal. -->
+    <script is:inline>
+      document.documentElement.classList.add('js-reveal');
+      // Red de seguridad: si el script de reveal no llega a ejecutarse
+      // (JS antiguo, error...), a los 2,5 s se muestra todo igualmente.
+      setTimeout(function () {
+        if (document.documentElement.dataset.revealReady === '1') return;
+        var els = document.querySelectorAll('[data-reveal]');
+        for (var i = 0; i < els.length; i++) els[i].classList.add('is-visible');
+      }, 2500);
+    </script>
+    <!-- Iconos generados desde media/logo.png (npm run icons) -->
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
+    <!-- Fuentes críticas: sin precargar, el navegador solo las pide cuando ya
+         ha bajado el HTML y maquetado el texto -> la tipografía de sistema se
+         ve un instante y el texto salta. Aquí empiezan a bajar al leer el head. -->
+    <link rel="preload" href="/fonts/syne-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="theme-color" content="#060606" />
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>{title} | Bernardo Millán · IT & 3D Systems</title>
+    <meta name="title" content={`${title} | Bernardo Millán · IT & 3D Systems`} />
+    <meta name="description" content={description} />
+    <meta name="author" content="Bernardo Millán" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / LinkedIn -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={`${title} | Bernardo Millán · IT & 3D`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:locale" content="es_ES" />
+
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content={`${title} | Bernardo Millán · IT & 3D`} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+
+    <!-- Google Fonts eliminado: las fuentes se sirven desde el propio dominio
+         (ver imports en el frontmatter) => 2 orígenes externos menos. -->
+
+    <!-- Schema.org Structured Data -->
+    <script type="application/ld+json" is:inline>
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Bernardo Millán",
+        "jobTitle": "Técnico en Sistemas Microinformáticos y Redes",
+        "url": "https://bernardomillan.is-a.dev",
+        "knowsAbout": [
+          "Sistemas Microinformáticos y Redes (SMR)",
+          "Redes de Área Local y VLANs",
+          "GNU/Linux y Windows Server",
+          "Atención al cliente y gestión de equipos (Retail)",
+          "Diseño CAD 3D Fusion 360",
+          "Fabricación Aditiva FDM y Resina"
+        ],
+        "description": "Profesional con más de 8 años en retail textil como encargado y dependiente, titulado en SMR y en búsqueda activa de empleo en IT."
+      }
+    </script>
+  </head>
+  <body class="bg-[#050505] text-[#f2f2f2] font-sans antialiased overflow-x-hidden selection:bg-white selection:text-black">
+    <slot />
+
+    <!-- Reveal: fade de TODA la página al CARGAR (no al hacer scroll).
+         Antes cada sección se animaba al entrar en el viewport, lo que
+         obligaba a repintar y maquetar EN MEDIO del scroll: en iPad eso se
+         nota como tirones. Ahora todo entra al abrir, escalonado, y cuando
+         bajas ya está pintado: el scroll solo compone. -->
+    <script>
+      const revealEls = document.querySelectorAll<HTMLElement>('[data-reveal]');
+      const showAll = () => revealEls.forEach((el) => el.classList.add('is-visible'));
+      const ready = () => (document.documentElement.dataset.revealReady = '1');
+
+      const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (reduced) {
+        showAll();
+        ready();
+      } else {
+        // Dos frames antes de revelar: hace falta que el navegador pinte una
+        // vez el estado oculto; si la clase entra sin pintado previo, WebKit
+        // (iPhone/iPad) a veces no lanza la transición y todo aparece de golpe.
+        let hechas = false;
+        const revelar = () => {
+          if (hechas) return;
+          hechas = true;
+          revealEls.forEach((el, i) => {
+            // Escalonado: el que lleve data-reveal-delay respeta su valor
+            // (hero, contacto, tarjetas); el resto entra por orden de
+            // documento, con tope para que nada espere más de ~0,5 s.
+            const explicit = el.dataset.revealDelay;
+            const delay = explicit !== undefined ? Number(explicit) : Math.min(i * 45, 540);
+            if (delay > 0) el.style.transitionDelay = `${delay}ms`;
+            el.classList.add('is-visible');
+          });
+          ready();
+        };
+        requestAnimationFrame(() => requestAnimationFrame(revelar));
+        // Respaldo: si los rAF están aplazados (pestaña en segundo plano al
+        // abrir), el fade no espera a que la pestaña se recupere. En una
+        // pestaña visible los dos frames llegan antes (~30 ms) y esto no pinta.
+        setTimeout(revelar, 300);
+      }
+    </script>
+  </body>
+</html>
+
+<style is:global>
+  @import "tailwindcss";
+
+  /* Los 6 componentes de abajo NO se renderizan (solo se usa index.astro con
+     Navbar/Hero/CapsuleCorp3D/Contact/Footer), pero Tailwind escanea todo el
+     proyecto y colaba sus clases: -15 KB de CSS en el HTML que baja cada
+     visitante. Si vuelves a usar alguno, BORRA su línea @source not o el
+     componente saldrá sin estilos. */
+  @source not "../components/About.astro";
+  @source not "../components/Skills.astro";
+  @source not "../components/Experience.astro";
+  @source not "../components/Projects.astro";
+  @source not "../components/Carousel3D.astro";
+  @source not "../components/Homelab.astro";
+
+  /* Fuentes auto-alojadas: mismo origen que la web (nada de Google) y solo el
+     subconjunto latino, que es todo lo que usa el texto en español. Los rangos
+     de peso los marca la propia fuente variable, así que 3 ficheros cubren
+     todas las pesos de la página. Copiadas con `npm run fonts`. */
+  @font-face {
+    font-family: 'Syne Variable';
+    font-style: normal;
+    font-weight: 400 800;
+    font-display: swap;
+    src: url('/fonts/syne-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'Space Grotesk Variable';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url('/fonts/space-grotesk-latin.woff2') format('woff2');
+  }
+  @font-face {
+    font-family: 'JetBrains Mono Variable';
+    font-style: normal;
+    font-weight: 100 800;
+    font-display: swap;
+    src: url('/fonts/jetbrains-mono-latin.woff2') format('woff2');
+  }
+
+  @theme {
+    --font-syne: 'Syne Variable', sans-serif;
+    --font-space: 'Space Grotesk Variable', sans-serif;
+    --font-mono: 'JetBrains Mono Variable', monospace;
+  }
+
+  :root {
+    --font-display: 'Syne Variable', sans-serif;
+    --font-body: 'Space Grotesk Variable', sans-serif;
+    --font-code: 'JetBrains Mono Variable', monospace;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background-color: #050505;
+    background-image: 
+      radial-gradient(ellipse 80% 50% at 50% -20%, rgba(120, 120, 120, 0.15), rgba(255, 255, 255, 0)),
+      radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.03), transparent 40%);
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.03em;
+  }
+
+  .font-mono-tech {
+    font-family: var(--font-code);
+  }
+
+  /* Liquid Chrome Gradients & Metal Finishes */
+  .chrome-text {
+    background: linear-gradient(135deg, #ffffff 0%, #d4d4d8 30%, #71717a 60%, #ffffff 85%, #a1a1aa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .chrome-border {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .chrome-border::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0.2) 100%);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* iOS 27 Liquid Droplet Glass */
+  .ios-droplet {
+    background: rgba(18, 18, 18, 0.65);
+    backdrop-filter: blur(16px) saturate(200%);
+    -webkit-backdrop-filter: blur(16px) saturate(200%);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 
+      0 20px 40px -15px rgba(0, 0, 0, 0.8),
+      0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+      0 1px 2px rgba(255, 255, 255, 0.3) inset;
+  }
+
+  .glass-card {
+    background: rgba(15, 15, 15, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .glass-card:hover {
+    border-color: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.9), 0 0 25px rgba(255, 255, 255, 0.04);
+  }
+
+  /* Tabletes/móviles: el backdrop-filter sobre muchas superficies provoca
+     destellos negros al hacer scroll (Safari/iOS). Se mantiene el fondo
+     translúcido oscuro, solo se quita el desenfoque del fondo. */
+  @media (pointer: coarse) {
+    .glass-card {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+  }
+
+  /* Shimmer / Chrome Sweep Effect */
+  @keyframes chromeSweep {
+    0% {
+      background-position: -200% 0;
+    }
+    100% {
+      background-position: 200% 0;
+    }
+  }
+
+  .btn-chrome {
+    position: relative;
+    background: linear-gradient(135deg, #ffffff 0%, #e4e4e7 40%, #a1a1aa 100%);
+    color: #000000;
+    font-weight: 700;
+    transition: all 0.3s ease;
+    overflow: hidden;
+  }
+
+  .btn-chrome:hover {
+    background: linear-gradient(135deg, #ffffff 0%, #f4f4f5 50%, #d4d4d8 100%);
+    box-shadow: 0 0 30px rgba(255, 255, 255, 0.35);
+    transform: scale(1.02);
+  }
+
+  /* Floating Avatar Effect */
+  @keyframes avatarFloat {
+    0%, 100% {
+      transform: translate3d(0, 0, 0);
+    }
+    50% {
+      transform: translate3d(0, -10px, 0);
+    }
+  }
+
+  .avatar-float {
+    animation: avatarFloat 6s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+    will-change: transform;
+  }
+
+  .avatar-shadow {
+    animation: avatarShadow 6s cubic-bezier(0.37, 0, 0.63, 1) infinite;
+    will-change: transform, opacity;
+  }
+
+  @keyframes avatarShadow {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(0.8);
+      opacity: 0.35;
+    }
+  }
+
+  /* Skeleton de carga de fotos: barrido sutil en vez de hueco negro */
+  .img-skeleton {
+    background-image: linear-gradient(
+      100deg,
+      rgba(255, 255, 255, 0) 25%,
+      rgba(255, 255, 255, 0.07) 45%,
+      rgba(255, 255, 255, 0) 65%
+    );
+    background-size: 250% 100%;
+    background-repeat: no-repeat;
+    animation: skeletonSweep 1.4s ease-in-out infinite;
+  }
+
+  @keyframes skeletonSweep {
+    0% {
+      background-position: 160% 0;
+    }
+    100% {
+      background-position: -60% 0;
+    }
+  }
+
+  /* Reveal al cargar (fade-up suave). Solo aplica si <html> tiene .js-reveal,
+     que añade un script inline en <head>: sin JS el contenido se ve siempre.
+     Movimiento LENTO y CORTO con curva ease-out-sine: la opacidad sube de
+     forma progresiva desde el principio (sin el «salto» del ease-out-expo
+     anterior, que pegaba el 70 % en el primer 20 % del tiempo) y termina sin
+     sacudida. Las propiedades de interacción (transform, box-shadow,
+     border-color, background-color) se quedan en 0,4 s: el hover y el menú
+     deben seguir sintiéndose inmediatos. */
+  .js-reveal [data-reveal] {
+    opacity: 0;
+    translate: 0 10px;
+    transition:
+      opacity 1s cubic-bezier(0.39, 0.575, 0.565, 1),
+      translate 1s cubic-bezier(0.39, 0.575, 0.565, 1),
+      transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+      background-color 0.4s ease;
+  }
+
+  .js-reveal [data-reveal].is-visible {
+    opacity: 1;
+    translate: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .js-reveal [data-reveal] {
+      opacity: 1;
+      translate: none;
+      transition: none;
+    }
+  }
+
+  /* Menú móvil (Navbar.astro): las clases `animate-in fade-in zoom-in-95
+     duration-200` son de tailwindcss-animate, plugin que NO está instalado, y
+     el menú aparecía de golpe. En vez de meter una dependencia se define aquí
+     la misma entrada: fade + zoom del 95 % al 100 % en 0,2 s. Solo afecta a
+     ese menú y solo cuando se le quita la clase `hidden` (es decir, al abrirlo,
+     que es justo cuando queremos que se vea); usa opacity/transform, así que
+     la pinta la GPU y no obliga a rehacer la maquetación. */
+  .animate-in {
+    animation: mobile-menu-enter 0.2s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  @keyframes mobile-menu-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .animate-in {
+      animation: none;
+    }
+  }
+
+  /* ===== Táctil: menos repintado al hacer scroll (iPhone/tablet) =====
+     En móvil lo que frena el scroll es pintar, no descargar (las fotos ya
+     llevan placeholder). Todo va tras las reglas anteriores para ganar en
+     orden, y solo con puntero táctil: en PC no cambia nada. */
+  @media (pointer: coarse) {
+    /* 1. La navbar es fija: su backdrop-filter se recalcula en CADA frame de
+          scroll (clásico jank de iOS). Sin él el fondo 0,65 dejaría ver el
+          texto de debajo con claridad, así que sube la opacidad. */
+    .ios-droplet {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background: rgba(10, 10, 10, 0.92);
+    }
+
+    /* 2. Animaciones infinitas: mantienen capas vivas y repintan sin parar
+          mientras haces scroll, así que en táctil se quedan en su estado
+          inicial (que es el aspecto normal del elemento).
+          EXCEPCIÓN — efecto flotante del avatar: `.avatar-float` solo mueve
+          `transform` y `.avatar-shadow` solo `transform` + `opacity`, así que
+          los dos los lleva el compositor SIN repintar ni rehacer maquetación
+          (y con `will-change` ya tienen capa propia). Coste ~0 durante el
+          scroll y el usuario lo quiere ver en móvil, así que NO se apagan. */
+    .animate-ping,
+    .animate-pulse,
+    .img-skeleton {
+      animation: none;
+      will-change: auto;
+    }
+
+    /* 3. Halos decorativos con blur de 64 px sobre 384 px: apenas se ven
+          (blanco al 2-3%) pero son caros de componer en cada frame. */
+    .ambient-glow {
+      display: none;
+    }
+
+    /* 4. El fade de carga en táctil va más corto que en PC (0,6 s, 5 px) para
+          que no se perciba como «carga lenta», pero con la misma curva suave:
+          empieza progresivo y termina sin sacudida. */
+    .js-reveal [data-reveal] {
+      translate: 0 5px;
+      transition:
+        opacity 0.6s cubic-bezier(0.39, 0.575, 0.565, 1),
+        translate 0.6s cubic-bezier(0.39, 0.575, 0.565, 1),
+        transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+        background-color 0.4s ease;
+    }
+
+    /* 5. Resto de backdrop-filter (pie, chips y badges del carrusel): cada uno
+          fuerza un pase de desenfoque por frame mientras el contenido pasa por
+          debajo. Solo el pie cambia de aspecto, así que gana opacidad para que
+          el texto siga legible sin desenfoque. */
+    .backdrop-blur-md {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+    }
+    footer {
+      background: rgba(0, 0, 0, 0.9);
+    }
+
+    /* 6. iOS deja el :hover pegado tras tocar: la tarjeta se queda 2 px
+          subida y el botón escalado. En táctil se quedan en su estado normal.
+          La foto va EN COLOR con el filtro clavado (sin gris y con
+          !important): en táctil no hay hover, así que el gris no se llega a
+          ver nunca y solo encubre las fotos. Un filtro que no cambia no
+          re-rasteriza nada al tocar, de modo que el coste es el mismo que
+          tenía el gris. El gris (y su transición a color) sigue existiendo
+          solo en escritorio, donde se resuelve con el hover del ratón. */
+    .glass-card:hover {
+      transform: none;
+      box-shadow: 0 10px 24px -16px rgba(0, 0, 0, 0.9);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+    .project-photo {
+      filter: contrast(1.1) brightness(0.95) !important;
+      transition: opacity 0.7s ease-out !important;
+    }
+    .btn-chrome:hover {
+      transform: none;
+      box-shadow: none;
+    }
+    .btn-chrome:active {
+      transform: scale(0.98);
+    }
+  }
+
+  /* Aquí se difería el render de #proyectos, #contacto y el pie (reglas con
+     auto + contain-intrinsic-size): el navegador maquetaba y pintaba esas
+     secciones EN MEDIO del scroll, y en iPad eso se notaba como tirones.
+     Se retiró a petición: ahora la página entera se renderiza al abrirla y
+     el scroll no hace más que componer lo ya pintado. */
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #080808;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #27272a;
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #52525b;
+  }
+</style>

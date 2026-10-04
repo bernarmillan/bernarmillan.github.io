@@ -1,0 +1,301 @@
+---
+import { capsuleCorpInfo, capsuleCorpProjects } from '../data/portfolio';
+import { lqip } from '../data/lqip';
+---
+
+<section id="proyectos" class="relative z-0 py-24 px-4 sm:px-6 md:px-8 max-w-6xl mx-auto border-t border-white/10">
+  <!-- Subtle Background Grid/Reflections -->
+  <div class="absolute inset-0 bg-[radial-gradient(#ffffff0a_1px,transparent_1px)] [background-size:24px_24px] pointer-events-none opacity-40"></div>
+
+  <!-- 1. Header: Capsule Corp 3D Brand & Instagram Connection -->
+  <div data-reveal class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
+    <div>
+      <!-- Monospace Section Marker -->
+      <div class="flex items-center gap-2 mb-2 font-mono-tech text-xs tracking-widest text-zinc-400 uppercase">
+        <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
+        <span>PROYECTOS & FABRICACIÓN ADITIVA</span>
+      </div>
+
+      <!-- Section Title & Tagline -->
+      <h2 class="text-3xl sm:text-5xl font-display font-extrabold text-white tracking-tight uppercase">
+        {capsuleCorpInfo.brand}
+      </h2>
+      <p class="text-sm sm:text-base text-zinc-300 font-sans mt-2 max-w-xl leading-relaxed">
+        {capsuleCorpInfo.description}
+      </p>
+    </div>
+
+    <!-- Instagram Direct Badge & Stats -->
+    <div class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+      <div class="flex items-center gap-2 font-mono-tech text-xs text-zinc-400">
+        {capsuleCorpInfo.stats?.map(stat => (
+          <span class="px-2.5 py-1 rounded bg-white/5 border border-white/10">{stat.label}: {stat.value}</span>
+        ))}
+      </div>
+
+      <a 
+        href={capsuleCorpInfo.url} 
+        target="_blank" 
+        rel="noopener noreferrer" 
+        class="btn-chrome inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-xs font-bold tracking-wider uppercase group"
+      >
+        <span>Instagram {capsuleCorpInfo.tag}</span>
+        <svg class="w-3.5 h-3.5 stroke-[2.5] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 19.5l15-15m0 0H8.25m11.25 0v11.25" />
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <!-- 2. Lookbook Editorial Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 relative z-10 max-w-3xl mx-auto">
+    {capsuleCorpProjects.map((project: any, idx: number) => {
+      // Soporta tanto array `images` como `image` individual
+      const images: string[] = Array.isArray(project.images) && project.images.length > 0
+        ? project.images
+        : (project.image ? [project.image] : []);
+      const hasMultiple = images.length > 1;
+      const carouselId = `project-carousel-${project.id || idx}`;
+      // Placeholder borroso inline de la primera imagen (blur-up)
+      const firstLqip = images[0] ? lqip[images[0]] : undefined;
+
+      return (
+        <article data-reveal data-reveal-delay={idx * 90} class="glass-card rounded-2xl overflow-hidden group/card flex flex-col justify-between border border-white/10 hover:border-white/30 transition-all duration-500">
+          <!-- Image / Multi-Image Carousel Container -->
+          <div 
+            id={carouselId} 
+            class={`project-carousel relative aspect-square w-full overflow-hidden bg-black/80 select-none ${firstLqip ? '' : 'img-skeleton'}`}
+            data-total={images.length}
+            data-current="0"
+          >
+            <!-- Carousel Track -->
+            <div class="carousel-track flex w-full h-full transition-transform duration-500 ease-out">
+              {images.map((imgSrc: string, imgIdx: number) => (
+                <div
+                  class="w-full h-full shrink-0 relative aspect-square bg-cover bg-center"
+                  style={lqip[imgSrc] ? `background-image:url('${lqip[imgSrc]}')` : undefined}
+                >
+                  <img 
+                    src={imgSrc} 
+                    alt={`${project.title} - imagen ${imgIdx + 1}`} 
+                    class="project-photo w-full h-full object-cover object-center filter grayscale contrast-110 brightness-95 group-hover/card:grayscale-0 transition-all duration-700 ease-out opacity-0"
+                    loading="eager"
+                    fetchpriority="low"
+                    decoding="async"
+                    onload="this.classList.replace('opacity-0','opacity-100'); this.closest('.project-carousel')?.classList.remove('img-skeleton')"
+                    onerror="this.classList.replace('opacity-0','opacity-100'); this.closest('.project-carousel')?.classList.remove('img-skeleton')"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <!-- Top Left: Floating Category / Spec Tag -->
+            <div class="absolute top-3 left-3 z-20 pointer-events-none">
+              <span class="font-mono-tech text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-white border border-white/20">
+                {project.tag || project.category || "PROYECTO 3D"}
+              </span>
+            </div>
+
+            <!-- Top Right: Carousel Counter (solo si hay más de 1) & Instagram Pill -->
+            <div class="absolute top-3 right-3 z-20 flex items-center gap-1.5">
+              {hasMultiple && (
+                <span class="carousel-counter font-mono-tech text-[10px] tracking-wider px-2 py-0.5 rounded-full bg-black/75 backdrop-blur-md text-zinc-200 border border-white/20">
+                  1/{images.length}
+                </span>
+              )}
+
+              <a 
+                href={project.instagramUrl || capsuleCorpInfo.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                class="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white hover:bg-white/20 transition-all opacity-80 group-hover/card:opacity-100"
+                title="Ver publicación en Instagram"
+              >
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                </svg>
+              </a>
+            </div>
+
+            <!-- Botones Prev/Next & Dots (SOLO si hay más de 1 imagen) -->
+            {hasMultiple && (
+              <>
+                <button 
+                  type="button" 
+                  class="carousel-prev absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center opacity-85 sm:opacity-0 group-hover/card:opacity-100 focus:opacity-100 hover:bg-white hover:text-black transition-all cursor-pointer shadow-lg active:scale-95"
+                  aria-label="Imagen anterior"
+                >
+                  <svg class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
+
+                <button 
+                  type="button" 
+                  class="carousel-next absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center opacity-85 sm:opacity-0 group-hover/card:opacity-100 focus:opacity-100 hover:bg-white hover:text-black transition-all cursor-pointer shadow-lg active:scale-95"
+                  aria-label="Imagen siguiente"
+                >
+                  <svg class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+
+                <!-- Dots indicadores estilo Instagram -->
+                <div class="carousel-dots absolute bottom-3 inset-x-0 z-20 flex items-center justify-center gap-1.5 pointer-events-none">
+                  {images.map((_: any, dotIdx: number) => (
+                    <span 
+                      class={`carousel-dot transition-all duration-300 rounded-full ${
+                        dotIdx === 0 
+                          ? 'w-4 h-1.5 bg-white shadow-sm' 
+                          : 'w-1.5 h-1.5 bg-white/40'
+                      }`}
+                    />
+                  ))}
+                </div>
+              </>
+            )}
+
+            <!-- Gradiente sutil inferior -->
+            <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0f0f0f] to-transparent pointer-events-none"></div>
+          </div>
+
+          <!-- Card Content & Technical Specifications -->
+          <div class="p-5 flex-1 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs font-mono-tech text-zinc-400 mb-1">
+                <span>{project.category}</span>
+                <span>// 0{idx + 1}</span>
+              </div>
+
+              <h3 class="font-display text-lg font-bold text-white group-hover/card:text-zinc-100 transition-colors">
+                {project.title}
+              </h3>
+
+              <p class="text-xs text-zinc-300 font-sans mt-2 leading-relaxed">
+                {project.specs}
+              </p>
+            </div>
+
+            <!-- Technical Specs Badges -->
+            <div class="mt-4 pt-3 border-t border-white/5 grid grid-cols-2 gap-2 text-[10px] font-mono-tech text-zinc-400">
+              <div>
+                <span class="text-zinc-500 block">MATERIAL:</span>
+                <span class="text-zinc-200">{project.material || "PLA"}</span>
+              </div>
+              <div>
+                <span class="text-zinc-500 block">{project.software ? "SOFTWARE:" : "DETALLES:"}</span>
+                <span class="text-zinc-200">{project.software || project.infill || "3D Printing"}</span>
+              </div>
+            </div>
+          </div>
+        </article>
+      );
+    })}
+  </div>
+
+  <!-- Fallback sin JS: las fotos no deben quedarse invisibles -->
+  <noscript>
+    <style is:inline>
+      .project-carousel img { opacity: 1 !important; }
+      .project-carousel { animation: none !important; }
+    </style>
+  </noscript>
+
+  <!-- 3. Bottom Banner: Call to Action for 3D Projects -->
+  <div data-reveal class="mt-12 p-6 sm:p-8 rounded-2xl glass-card border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
+    <div>
+      <h3 class="text-xl font-display font-bold text-white">
+        ¿Tienes una pieza técnica, figura o encargo 3D?
+      </h3>
+      <p class="text-xs sm:text-sm text-zinc-400 mt-1 max-w-lg">
+        Diseños personalizados a partir de bocetos, figuras coleccionables y prototipado rápido en FDM.
+      </p>
+    </div>
+
+    <a 
+      href={capsuleCorpInfo.url} 
+      target="_blank" 
+      rel="noopener noreferrer" 
+      class="btn-chrome px-6 py-3 rounded-full text-xs font-bold tracking-wider uppercase shrink-0"
+    >
+      Contactar en {capsuleCorpInfo.tag} ↗
+    </a>
+  </div>
+</section>
+
+<!-- Script para la navegación multi-imagen en cada carrusel -->
+<script>
+  function setupCarousels() {
+    const carousels = document.querySelectorAll<HTMLElement>('.project-carousel');
+
+    carousels.forEach((carousel) => {
+      const total = parseInt(carousel.getAttribute('data-total') || '1', 10);
+      if (total <= 1) return; // Si solo tiene 1 imagen, no necesita controles
+
+      const track = carousel.querySelector<HTMLElement>('.carousel-track');
+      const counter = carousel.querySelector<HTMLElement>('.carousel-counter');
+      const prevBtn = carousel.querySelector<HTMLElement>('.carousel-prev');
+      const nextBtn = carousel.querySelector<HTMLElement>('.carousel-next');
+      const dots = carousel.querySelectorAll<HTMLElement>('.carousel-dot');
+
+      let current = 0;
+
+      const updateSlide = (newIndex: number) => {
+        current = (newIndex + total) % total;
+        carousel.setAttribute('data-current', current.toString());
+
+        if (track) {
+          track.style.transform = `translateX(-${current * 100}%)`;
+        }
+
+        if (counter) {
+          counter.textContent = `${current + 1}/${total}`;
+        }
+
+        dots.forEach((dot, idx) => {
+          if (idx === current) {
+            dot.className = 'carousel-dot transition-all duration-300 rounded-full w-4 h-1.5 bg-white shadow-sm';
+          } else {
+            dot.className = 'carousel-dot transition-all duration-300 rounded-full w-1.5 h-1.5 bg-white/40';
+          }
+        });
+      };
+
+      prevBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        updateSlide(current - 1);
+      });
+
+      nextBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        updateSlide(current + 1);
+      });
+
+      // Soporte gestual táctil / swipe para móviles
+      let touchStartX = 0;
+      let touchEndX = 0;
+
+      carousel.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      carousel.addEventListener('touchend', (e) => {
+        touchEndX = e.changedTouches[0].screenX;
+        const diff = touchStartX - touchEndX;
+        if (Math.abs(diff) > 40) {
+          if (diff > 0) {
+            updateSlide(current + 1);
+          } else {
+            updateSlide(current - 1);
+          }
+        }
+      }, { passive: true });
+    });
+  }
+
+  // Ejecutar al cargar la página
+  setupCarousels();
+  document.addEventListener('astro:page-load', setupCarousels);
+</script>

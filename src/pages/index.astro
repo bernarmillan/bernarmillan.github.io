@@ -1,0 +1,40 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import CapsuleCorp3D from '../components/CapsuleCorp3D.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+import { personalInfo } from '../data/portfolio';
+---
+
+<Layout 
+  title={personalInfo.name}
+  description={`${personalInfo.name} — ${personalInfo.tagline}`}
+  image={personalInfo.avatar}
+>
+  <!-- 1. Floating iOS 27 Liquid Droplet Navbar -->
+  <Navbar cvUrl={personalInfo.cvUrl} />
+
+  <main class="relative z-10">
+    <!-- 2. First Viewport: min 100dvh (Hero + Photo + 3 CV Pillars), crece si el contenido no cabe -->
+    <Hero 
+      avatar={personalInfo.avatar}
+    />
+
+    <!-- 3. Showcase Proyectos 3D: Capsule Corp 3D (@capsulecorp.3d) Lookbook -->
+    <CapsuleCorp3D />
+
+    <!-- 4. Contacto Directo & CV -->
+    <Contact 
+      email={personalInfo.email}
+      linkedin={personalInfo.linkedin}
+      github={personalInfo.github}
+      instagramUrl={personalInfo.instagramUrl}
+      cvUrl={personalInfo.cvUrl}
+    />
+  </main>
+
+  <!-- 5. Editorial Minimalist Footer -->
+  <Footer />
+</Layout>
