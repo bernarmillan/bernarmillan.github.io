@@ -11,11 +11,14 @@ interface Props {
 const { 
   title, 
   description = "Bernardo Millán — Técnico en Sistemas Microinformáticos y Redes (SMR) con más de 8 años de trayectoria en retail textil y encargado de tienda. En búsqueda activa en IT y diseñador en @capsulecorp.3d.",
-  image = "/images/avatar.jpg"
+  image = "/images/og.png"
 } = Astro.props;
 
 const siteUrl = "https://bernardomillan.is-a.dev";
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+// Los rastreadores sociales (WhatsApp, LinkedIn, Telegram, Twitter) exigen URL
+// ABSOLUTA en og:image: con la ruta relativa no pegan ninguna preview.
+const imageURL = new URL(image, siteUrl).href;
 ---
 
 <!doctype html>
@@ -60,14 +63,16 @@ const canonicalURL = new URL(Astro.url.pathname, siteUrl);
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={`${title} | Bernardo Millán · IT & 3D`} />
     <meta property="og:description" content={description} />
-    <meta property="og:image" content={image} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
     <meta property="og:locale" content="es_ES" />
 
     <!-- Twitter Card -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content={`${title} | Bernardo Millán · IT & 3D`} />
     <meta property="twitter:description" content={description} />
-    <meta property="twitter:image" content={image} />
+    <meta property="twitter:image" content={imageURL} />
 
     <!-- Google Fonts eliminado: las fuentes se sirven desde el propio dominio
          (ver imports en el frontmatter) => 2 orígenes externos menos. -->

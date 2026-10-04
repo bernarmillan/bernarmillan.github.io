@@ -30,9 +30,12 @@ const htmlKB = +(statSync(HTML).size / 1024).toFixed(1);
 const files = walk('dist');
 const totalMB = +(files.reduce((a, f) => a + statSync(f).size, 0) / 1048576).toFixed(2);
 // cv.pdf (156 KB) solo se descarga al pulsar el boton de CV: no es carga de
-// pagina, asi que se mira aparte y no contamina el limite.
+// pagina, asi que se mira aparte y no contamina el limite. Otros tanto de
+// 404.html (solo si hay error), images/og.png (solo lo piden WhatsApp/
+// LinkedIn/Twitter) y robots/sitemap (solo rastreadores).
+const NO_SE_CARGAN = ['cv.pdf', '404.html', 'images/og.png', 'robots.txt', 'sitemap.xml'];
 const pageMB = +(files
-  .filter((f) => !f.endsWith('cv.pdf'))
+  .filter((f) => !NO_SE_CARGAN.some((x) => f.endsWith(x)))
   .reduce((a, f) => a + statSync(f).size, 0) / 1048576).toFixed(2);
 check('HTML ≤ 100 KB', htmlKB <= 100, `${htmlKB} KB`);
 check('carga de página ≤ 0.60 MB', pageMB <= 0.6, `${pageMB} MB (dist total ${totalMB} MB con cv.pdf)`);
@@ -108,6 +111,19 @@ check('sin blur de tarjeta > 12px', n('backdrop-filter:blur(20px)') + n('backdro
 const localRefs = [...new Set([...h.matchAll(/(?:src|href)="(\/[^"#][^"]*)"/g)].map((m) => m[1]))];
 const broken = localRefs.filter((f) => !existsSync(`dist${f}`));
 check('sin referencias locales rotas', broken.length === 0, JSON.stringify(broken));
+
+// ── 8. SEO, preview social y utilidades ───────────────────────────────────
+const ogImage = (h.match(/property="og:image" content="([^"]+)"/) || [])[1] || '';
+check('og:image absoluta (https://…)', /^https:\/\/[^"]+\/images\/og\.png$/.test(ogImage), ogImage || 'sin og:image');
+const ogPath = 'dist/images/og.png';
+const ogKB = existsSync(ogPath) ? +(statSync(ogPath).size / 1024).toFixed(1) : 0;
+check('og.png (imagen de preview) ≤ 120 KB', ogKB > 0 && ogKB <= 120, `${ogKB} KB`);
+const robotsTxt = existsSync('dist/robots.txt') ? readFileSync('dist/robots.txt', 'utf8') : '';
+check('robots.txt con Allow y Sitemap', /Allow:\s*\//.test(robotsTxt) && /Sitemap:\s*https:\/\//.test(robotsTxt));
+const sitemapXml = existsSync('dist/sitemap.xml') ? readFileSync('dist/sitemap.xml', 'utf8') : '';
+check('sitemap.xml con URL canónica', /<loc>https:\/\/[^<]+<\/loc>/.test(sitemapXml) && sitemapXml.includes('</urlset>'));
+const notFound = existsSync('dist/404.html') ? readFileSync('dist/404.html', 'utf8') : '';
+check('404.html propio (estilo del sitio)', notFound.includes('Ruta no encontrada') && /href="\/"/.test(notFound));
 
 // ── Informe ───────────────────────────────────────────────────────────────
 console.log(`\ndist/index.html ${htmlKB} KB · carga de página ${pageMB} MB · dist total ${totalMB} MB · ${files.length} ficheros\n`);
