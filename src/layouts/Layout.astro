@@ -14,11 +14,18 @@ const {
   image = "/images/og.png"
 } = Astro.props;
 
+// Canónica definitiva: el dominio propio (una vez el PR de is-a.dev esté
+// mergeado y el DNS apunte a Pages).
 const siteUrl = "https://bernardomillan.is-a.dev";
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
+// Host de los MEDIOS mientras bernardomillan.is-a.dev no tenga DNS: la
+// preview del enlace tiene que poder descargarse YA, y ese dominio todavía
+// redirige a la landing de is-a.dev. Cuando el DNS esté listo, cámbialo por
+// `siteUrl` y todo sigue igual (solo cambia el host de la imagen).
+const assetUrl = "https://bernarmillan.github.io";
 // Los rastreadores sociales (WhatsApp, LinkedIn, Telegram, Twitter) exigen URL
 // ABSOLUTA en og:image: con la ruta relativa no pegan ninguna preview.
-const imageURL = new URL(image, siteUrl).href;
+const imageURL = new URL(image, assetUrl).href;
 ---
 
 <!doctype html>
