@@ -124,6 +124,8 @@ const sitemapXml = existsSync('dist/sitemap.xml') ? readFileSync('dist/sitemap.x
 check('sitemap.xml con URL canónica', /<loc>https:\/\/[^<]+<\/loc>/.test(sitemapXml) && sitemapXml.includes('</urlset>'));
 const notFound = existsSync('dist/404.html') ? readFileSync('dist/404.html', 'utf8') : '';
 check('404.html propio (estilo del sitio)', notFound.includes('Ruta no encontrada') && /href="\/"/.test(notFound));
+const canonical = (h.match(/<link rel="canonical" href="([^"]+)"/) || [])[1] || '';
+check('canonical absoluta al dominio propio', /^https:\/\/[^/]+\/$/.test(canonical) && !canonical.includes('github.io'), canonical || 'sin canonical');
 
 // ── Informe ───────────────────────────────────────────────────────────────
 console.log(`\ndist/index.html ${htmlKB} KB · carga de página ${pageMB} MB · dist total ${totalMB} MB · ${files.length} ficheros\n`);

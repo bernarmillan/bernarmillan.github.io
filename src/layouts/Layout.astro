@@ -64,6 +64,9 @@ const imageURL = new URL(image, assetUrl).href;
     <meta name="description" content={description} />
     <meta name="author" content="Bernardo Millán" />
     <meta name="robots" content="index, follow" />
+    <!-- URL canónica: dice a Google cuál es la original (el dominio propio)
+         y evita que github.io, /index.html o parámetros cuenten como duplicados. -->
+    <link rel="canonical" href={canonicalURL} />
 
     <!-- Open Graph / LinkedIn -->
     <meta property="og:type" content="website" />
