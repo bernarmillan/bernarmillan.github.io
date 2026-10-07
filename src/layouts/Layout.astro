@@ -2,20 +2,28 @@
 // Las fuentes se declaran con @font-face en el <style is:global> de abajo:
 // ruta estable en /fonts (generada con `npm run fonts`), solo el subconjunto
 // latino y preload en <head> para que estén antes del primer pintado.
+import type { Lang } from '../data/portfolio';
+import { getUi } from '../i18n/ui';
+
 interface Props {
-  title: string;
+  lang?: Lang;
+  title?: string;
   description?: string;
   image?: string;
 }
 
-const { 
-  title, 
-  description = "Bernardo Millán — Técnico en Sistemas Microinformáticos y Redes (SMR) con más de 8 años de trayectoria en retail textil y encargado de tienda. En búsqueda activa en IT y diseñador en @capsulecorp.3d.",
+const {
+  lang = "es",
+  title = "Bernardo Millán",
+  description,
   image = "/images/og.png"
 } = Astro.props;
 
-// Canónica definitiva: el dominio propio (una vez el PR de is-a.dev esté
-// mergeado y el DNS apunte a Pages).
+// Textos de meta/SEO del idioma activo (descripción, JSON-LD…).
+const ui = getUi(lang);
+const desc = description ?? ui.meta.description;
+
+// Canónica definitiva: el dominio propio.
 const siteUrl = "https://bernardomillan.is-a.dev";
 const canonicalURL = new URL(Astro.url.pathname, siteUrl);
 // Host de los MEDIOS: hasta que hubo DNS estaba en `bernarmillan.github.io`
@@ -26,10 +34,26 @@ const assetUrl = "https://bernardomillan.is-a.dev";
 // Los rastreadores sociales (WhatsApp, LinkedIn, Telegram, Twitter) exigen URL
 // ABSOLUTA en og:image: con la ruta relativa no pegan ninguna preview.
 const imageURL = new URL(image, assetUrl).href;
+
+// hreflang: Google sirve la versión que corresponda y no las considera
+// duplicadas entre sí. `x-default` es la puerta de entrada (español).
+const altES = new URL("/", siteUrl).href;
+const altEN = new URL("/en/", siteUrl).href;
+const ogLocale = lang === "en" ? "en_US" : "es_ES";
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Bernardo Millán",
+  jobTitle: ui.meta.jsonLd.jobTitle,
+  url: siteUrl,
+  knowsAbout: ui.meta.jsonLd.knowsAbout,
+  description: ui.meta.jsonLd.description
+};
 ---
 
 <!doctype html>
-<html lang="es" class="scroll-smooth bg-[#060606] text-[#eaeaea]">
+<html lang={lang} class="scroll-smooth bg-[#060606] text-[#eaeaea]">
   <head>
     <meta charset="utf-8" />
     <!-- Progressive enhancement: si el JS falla o está desactivado esta clase no se
@@ -61,51 +85,38 @@ const imageURL = new URL(image, assetUrl).href;
     <!-- Primary SEO Meta Tags -->
     <title>{title} | Bernardo Millán · IT & 3D Systems</title>
     <meta name="title" content={`${title} | Bernardo Millán · IT & 3D Systems`} />
-    <meta name="description" content={description} />
+    <meta name="description" content={desc} />
     <meta name="author" content="Bernardo Millán" />
     <meta name="robots" content="index, follow" />
     <!-- URL canónica: dice a Google cuál es la original (el dominio propio)
          y evita que github.io, /index.html o parámetros cuenten como duplicados. -->
     <link rel="canonical" href={canonicalURL} />
+    <!-- Idiomas: cada versión con la suya y `x-default` apuntando al español. -->
+    <link rel="alternate" hreflang="es" href={altES} />
+    <link rel="alternate" hreflang="en" href={altEN} />
+    <link rel="alternate" hreflang="x-default" href={altES} />
 
     <!-- Open Graph / LinkedIn -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={`${title} | Bernardo Millán · IT & 3D`} />
-    <meta property="og:description" content={description} />
+    <meta property="og:description" content={desc} />
     <meta property="og:image" content={imageURL} />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
-    <meta property="og:locale" content="es_ES" />
+    <meta property="og:locale" content={ogLocale} />
 
     <!-- Twitter Card -->
     <meta property="twitter:card" content="summary_large_image" />
     <meta property="twitter:title" content={`${title} | Bernardo Millán · IT & 3D`} />
-    <meta property="twitter:description" content={description} />
+    <meta property="twitter:description" content={desc} />
     <meta property="twitter:image" content={imageURL} />
 
     <!-- Google Fonts eliminado: las fuentes se sirven desde el propio dominio
          (ver imports en el frontmatter) => 2 orígenes externos menos. -->
 
-    <!-- Schema.org Structured Data -->
-    <script type="application/ld+json" is:inline>
-      {
-        "@context": "https://schema.org",
-        "@type": "Person",
-        "name": "Bernardo Millán",
-        "jobTitle": "Técnico en Sistemas Microinformáticos y Redes",
-        "url": "https://bernardomillan.is-a.dev",
-        "knowsAbout": [
-          "Sistemas Microinformáticos y Redes (SMR)",
-          "Redes de Área Local y VLANs",
-          "GNU/Linux y Windows Server",
-          "Atención al cliente y gestión de equipos (Retail)",
-          "Diseño CAD 3D Fusion 360",
-          "Fabricación Aditiva FDM y Resina"
-        ],
-        "description": "Profesional con más de 8 años en retail textil como encargado y dependiente, titulado en SMR y en búsqueda activa de empleo en IT."
-      }
-    </script>
+    <!-- Schema.org Structured Data (textos en el idioma de la página) -->
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(jsonLd)}></script>
   </head>
   <body class="bg-[#050505] text-[#f2f2f2] font-sans antialiased overflow-x-hidden selection:bg-white selection:text-black">
     <slot />

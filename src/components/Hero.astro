@@ -1,13 +1,18 @@
 ---
-import { personalInfo, cvPillars } from '../data/portfolio';
+import type { Lang } from '../data/portfolio';
+import { getPortfolio } from '../data/portfolio';
+import { getUi } from '../i18n/ui';
 
 interface Props {
   avatar?: string;
+  lang?: Lang;
 }
 
-const { 
-  avatar = personalInfo.avatar
-} = Astro.props;
+const props = Astro.props;
+const lang: Lang = props.lang ?? 'es';
+const { personalInfo, cvPillars } = getPortfolio(lang);
+const t = getUi(lang);
+const avatar = props.avatar ?? personalInfo.avatar;
 ---
 
 <section 
@@ -28,7 +33,7 @@ const {
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.8)]"></span>
         </span>
-        <span>DISPONIBLE // BÚSQUEDA ACTIVA EN IT</span>
+        <span>{t.hero.status}</span>
       </div>
 
       <!-- Avatar Photo Frame with Liquid Chrome Border & Specular Glint (floating) -->
@@ -60,7 +65,7 @@ const {
 
     <!-- Technical Editorial Tagline -->
     <p data-reveal data-reveal-delay="180" class="font-mono-tech text-xs sm:text-sm tracking-wider sm:tracking-widest text-zinc-400 uppercase mt-2 max-w-2xl">
-      [SMR CERTIFIED] · [+8 AÑOS TEXTIL & ENCARGADO] · [@CAPSULECORP.3D]
+      {t.hero.tagline}
     </p>
   </div>
 
@@ -115,7 +120,7 @@ const {
       href="#proyectos" 
       class="group/scroll inline-flex items-center gap-2 text-xs font-mono-tech text-zinc-400 hover:text-white transition-colors"
     >
-      <span class="tracking-widest uppercase text-[11px]">Ver Proyectos 3D</span>
+      <span class="tracking-widest uppercase text-[11px]">{t.hero.viewProjects}</span>
       <div class="w-6 h-6 rounded-full border border-white/20 flex items-center justify-center group-hover/scroll:border-white group-hover/scroll:translate-y-0.5 transition-all">
         <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />

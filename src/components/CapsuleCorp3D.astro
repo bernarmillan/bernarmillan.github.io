@@ -1,6 +1,16 @@
 ---
-import { capsuleCorpInfo, capsuleCorpProjects } from '../data/portfolio';
+import type { Lang } from '../data/portfolio';
+import { getPortfolio } from '../data/portfolio';
+import { getUi } from '../i18n/ui';
 import { lqip } from '../data/lqip';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = "es" } = Astro.props;
+const { capsuleCorpInfo, capsuleCorpProjects } = getPortfolio(lang);
+const t = getUi(lang);
 ---
 
 <section id="proyectos" class="relative z-0 py-24 px-4 sm:px-6 md:px-8 max-w-6xl mx-auto border-t border-white/10">
@@ -13,7 +23,7 @@ import { lqip } from '../data/lqip';
       <!-- Monospace Section Marker -->
       <div class="flex items-center gap-2 mb-2 font-mono-tech text-xs tracking-widest text-zinc-400 uppercase">
         <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
-        <span>PROYECTOS & FABRICACIÓN ADITIVA</span>
+        <span>{t.projects.marker}</span>
       </div>
 
       <!-- Section Title & Tagline -->
@@ -77,7 +87,7 @@ import { lqip } from '../data/lqip';
                 >
                   <img 
                     src={imgSrc} 
-                    alt={`${project.title} - imagen ${imgIdx + 1}`} 
+                    alt={`${project.title} - ${t.projects.imgLabel} ${imgIdx + 1}`} 
                     class="project-photo w-full h-full object-cover object-center filter grayscale contrast-110 brightness-95 group-hover/card:grayscale-0 transition-all duration-700 ease-out opacity-0"
                     loading="eager"
                     fetchpriority="low"
@@ -92,7 +102,7 @@ import { lqip } from '../data/lqip';
             <!-- Top Left: Floating Category / Spec Tag -->
             <div class="absolute top-3 left-3 z-20 pointer-events-none">
               <span class="font-mono-tech text-[10px] tracking-wider uppercase px-2.5 py-1 rounded-full bg-black/75 backdrop-blur-md text-white border border-white/20">
-                {project.tag || project.category || "PROYECTO 3D"}
+                {project.tag || project.category || t.projects.fallbackTag}
               </span>
             </div>
 
@@ -109,7 +119,7 @@ import { lqip } from '../data/lqip';
                 target="_blank" 
                 rel="noopener noreferrer" 
                 class="w-8 h-8 rounded-full bg-black/60 backdrop-blur-md border border-white/20 flex items-center justify-center text-zinc-300 hover:text-white hover:bg-white/20 transition-all opacity-80 group-hover/card:opacity-100"
-                title="Ver publicación en Instagram"
+                title={t.projects.viewPost}
               >
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
@@ -123,7 +133,7 @@ import { lqip } from '../data/lqip';
                 <button 
                   type="button" 
                   class="carousel-prev absolute left-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center opacity-85 sm:opacity-0 group-hover/card:opacity-100 focus:opacity-100 hover:bg-white hover:text-black transition-all cursor-pointer shadow-lg active:scale-95"
-                  aria-label="Imagen anterior"
+                  aria-label={t.projects.prev}
                 >
                   <svg class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" />
@@ -133,7 +143,7 @@ import { lqip } from '../data/lqip';
                 <button 
                   type="button" 
                   class="carousel-next absolute right-2.5 top-1/2 -translate-y-1/2 z-20 w-8 h-8 rounded-full bg-black/70 backdrop-blur-md border border-white/20 text-white flex items-center justify-center opacity-85 sm:opacity-0 group-hover/card:opacity-100 focus:opacity-100 hover:bg-white hover:text-black transition-all cursor-pointer shadow-lg active:scale-95"
-                  aria-label="Imagen siguiente"
+                  aria-label={t.projects.next}
                 >
                   <svg class="w-4 h-4 stroke-[2.5]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
@@ -183,7 +193,7 @@ import { lqip } from '../data/lqip';
                 <span class="text-zinc-200">{project.material || "PLA"}</span>
               </div>
               <div>
-                <span class="text-zinc-500 block">{project.software ? "SOFTWARE:" : "DETALLES:"}</span>
+                <span class="text-zinc-500 block">{project.software ? t.projects.software : t.projects.details}</span>
                 <span class="text-zinc-200">{project.software || project.infill || "3D Printing"}</span>
               </div>
             </div>
@@ -205,10 +215,10 @@ import { lqip } from '../data/lqip';
   <div data-reveal class="mt-12 p-6 sm:p-8 rounded-2xl glass-card border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-6 text-center sm:text-left">
     <div>
       <h3 class="text-xl font-display font-bold text-white">
-        ¿Tienes una pieza técnica, figura o encargo 3D?
+        {t.projects.ctaTitle}
       </h3>
       <p class="text-xs sm:text-sm text-zinc-400 mt-1 max-w-lg">
-        Diseños personalizados a partir de bocetos, figuras coleccionables y prototipado rápido en FDM.
+        {t.projects.ctaText}
       </p>
     </div>
 
@@ -218,7 +228,7 @@ import { lqip } from '../data/lqip';
       rel="noopener noreferrer" 
       class="btn-chrome px-6 py-3 rounded-full text-xs font-bold tracking-wider uppercase shrink-0"
     >
-      Contactar en {capsuleCorpInfo.tag} ↗
+      {t.projects.ctaLink} {capsuleCorpInfo.tag} ↗
     </a>
   </div>
 </section>

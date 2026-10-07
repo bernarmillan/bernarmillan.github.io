@@ -1,9 +1,17 @@
 ---
+import type { Lang } from '../data/portfolio';
+import { getUi } from '../i18n/ui';
+
 interface Props {
   cvUrl?: string;
+  lang?: Lang;
 }
 
-const { cvUrl = "/cv.pdf" } = Astro.props;
+const { cvUrl = "/cv.pdf", lang = "es" } = Astro.props;
+const t = getUi(lang);
+// Conmutador de idioma: EN desde la versión española, ES desde la inglesa.
+const otherLang: Lang = lang === 'es' ? 'en' : 'es';
+const switchHref = otherLang === 'en' ? '/en/' : '/';
 ---
 
 <header class="fixed top-0 left-0 right-0 z-50 flex justify-center px-4 sm:px-6 pt-3 pointer-events-none">
@@ -16,7 +24,7 @@ const { cvUrl = "/cv.pdf" } = Astro.props;
     <div class="absolute inset-x-8 -top-px h-px bg-gradient-to-r from-transparent via-white/70 to-transparent pointer-events-none"></div>
 
     <!-- Brand / Monogram (data-reveal: entra con fade al cargar la página) -->
-    <a href="#" data-reveal data-reveal-delay="0" class="flex items-center gap-2.5 group/brand focus:outline-none" aria-label="Inicio">
+    <a href="#" data-reveal data-reveal-delay="0" class="flex items-center gap-2.5 group/brand focus:outline-none" aria-label={t.nav.home}>
       <img 
         src="/brand/bm.png" 
         alt="" 
@@ -41,13 +49,13 @@ const { cvUrl = "/cv.pdf" } = Astro.props;
         href="#perfil" 
         class="text-zinc-300 hover:text-white transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-white hover:after:w-full after:transition-all"
       >
-        Perfil & CV
+        {t.nav.profile}
       </a>
       <a 
         href="#proyectos" 
         class="flex items-center gap-1.5 text-zinc-300 hover:text-white transition-colors relative py-1 group/proj"
       >
-        <span>Proyectos 3D</span>
+        <span>{t.nav.projects}</span>
         <span class="font-mono-tech text-[9px] px-1.5 py-0.5 rounded-full bg-white/10 text-zinc-200 border border-white/15 group-hover/proj:border-white/30 transition-colors">
           @capsulecorp.3d
         </span>
@@ -56,23 +64,35 @@ const { cvUrl = "/cv.pdf" } = Astro.props;
         href="#contacto" 
         class="text-zinc-300 hover:text-white transition-colors relative py-1 after:absolute after:bottom-0 after:left-0 after:w-0 after:h-[1.5px] after:bg-white hover:after:w-full after:transition-all"
       >
-        Contacto
+        {t.nav.contact}
       </a>
     </div>
 
-    <!-- Right Actions: Descargar CV & Mobile Menu Trigger -->
+    <!-- Right Actions: Language switch, Download CV & Mobile Menu Trigger -->
     <div data-reveal data-reveal-delay="120" class="flex items-center gap-2 sm:gap-3">
+      <!-- Conmutador ES/EN: enlace normal, funciona sin JavaScript -->
+      <a
+        href={switchHref}
+        hreflang={otherLang}
+        lang={otherLang}
+        aria-label={t.nav.switchAria}
+        title={t.nav.switchTitle}
+        class="font-mono-tech text-[10px] font-bold tracking-widest px-2.5 py-1.5 rounded-full border border-white/15 bg-white/5 text-zinc-300 hover:text-white hover:border-white/40 transition-colors"
+      >
+        {otherLang.toUpperCase()}
+      </a>
+
       <a 
         href={cvUrl} 
         download 
         class="btn-chrome flex items-center gap-1.5 px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-semibold tracking-wide shadow-md shadow-black/50"
-        title="Descargar Curriculum Vitae en PDF"
+        title={t.nav.downloadCvTitle}
       >
         <svg class="w-3.5 h-3.5 stroke-[2.2]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
         </svg>
-        <span class="hidden sm:inline">Descargar CV</span>
-        <span class="sm:hidden">CV</span>
+        <span class="hidden sm:inline">{t.nav.downloadCv}</span>
+        <span class="sm:hidden">{t.nav.downloadCvShort}</span>
       </a>
 
       <!-- Mobile Hamburger Button -->
@@ -80,7 +100,7 @@ const { cvUrl = "/cv.pdf" } = Astro.props;
         id="mobileMenuBtn" 
         type="button" 
         class="md:hidden p-1.5 rounded-full text-zinc-300 hover:text-white bg-white/5 hover:bg-white/10 transition-colors focus:outline-none"
-        aria-label="Abrir menú"
+        aria-label={t.nav.openMenu}
       >
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" />
@@ -94,16 +114,16 @@ const { cvUrl = "/cv.pdf" } = Astro.props;
     id="mobileMenu" 
     class="hidden pointer-events-auto absolute top-16 inset-x-4 max-w-sm mx-auto p-5 rounded-2xl ios-droplet flex flex-col gap-4 text-sm font-medium z-50 animate-in fade-in zoom-in-95 duration-200"
   >
-    <a href="#perfil" class="text-zinc-200 hover:text-white py-1 mobile-link">Perfil & Historia</a>
+    <a href="#perfil" class="text-zinc-200 hover:text-white py-1 mobile-link">{t.nav.mobileProfile}</a>
     <a href="#proyectos" class="flex items-center justify-between text-zinc-200 hover:text-white py-1 mobile-link">
-      <span>Proyectos 3D</span>
-      <span class="font-mono-tech text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-zinc-300">@capsulecorp.3d</span>
+      <span>{t.nav.projects}</span>
+      <span class="font-mono-tech text-[10px] px-2 py-0.5 rounded-full bg-white/10 text-zinc-200">@capsulecorp.3d</span>
     </a>
-    <a href="#contacto" class="text-zinc-200 hover:text-white py-1 mobile-link">Contacto</a>
+    <a href="#contacto" class="text-zinc-200 hover:text-white py-1 mobile-link">{t.nav.contact}</a>
     <div class="pt-2 border-t border-white/10 flex items-center justify-between">
-      <span class="font-mono-tech text-[10px] text-zinc-400">DISPONIBLE // IT SEEKER</span>
+      <span class="font-mono-tech text-[10px] text-zinc-400">{t.nav.mobileStatus}</span>
       <a href={cvUrl} download class="btn-chrome px-3 py-1.5 rounded-full text-xs font-bold">
-        Descargar CV PDF
+        {t.nav.mobileDownload}
       </a>
     </div>
   </div>

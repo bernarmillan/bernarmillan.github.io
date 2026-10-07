@@ -31,9 +31,10 @@ const files = walk('dist');
 const totalMB = +(files.reduce((a, f) => a + statSync(f).size, 0) / 1048576).toFixed(2);
 // cv.pdf (156 KB) solo se descarga al pulsar el boton de CV: no es carga de
 // pagina, asi que se mira aparte y no contamina el limite. Otros tanto de
-// 404.html (solo si hay error), images/og.png (solo lo piden WhatsApp/
+// 404.html (solo si hay error), en/index.html (es la version EN: otra URL,
+// no se carga con la raiz), images/og.png (solo lo piden WhatsApp/
 // LinkedIn/Twitter) y robots/sitemap (solo rastreadores).
-const NO_SE_CARGAN = ['cv.pdf', '404.html', 'images/og.png', 'robots.txt', 'sitemap.xml'];
+const NO_SE_CARGAN = ['cv.pdf', '404.html', 'en/index.html', 'images/og.png', 'robots.txt', 'sitemap.xml'];
 const pageMB = +(files
   .filter((f) => !NO_SE_CARGAN.some((x) => f.endsWith(x)))
   .reduce((a, f) => a + statSync(f).size, 0) / 1048576).toFixed(2);
@@ -126,6 +127,23 @@ const notFound = existsSync('dist/404.html') ? readFileSync('dist/404.html', 'ut
 check('404.html propio (estilo del sitio)', notFound.includes('Ruta no encontrada') && /href="\/"/.test(notFound));
 const canonical = (h.match(/<link rel="canonical" href="([^"]+)"/) || [])[1] || '';
 check('canonical absoluta al dominio propio', /^https:\/\/[^/]+\/$/.test(canonical) && !canonical.includes('github.io'), canonical || 'sin canonical');
+
+// ── 9. Idiomas: español en la raíz, inglés en /en/ ────────────────────────
+const EN = 'dist/en/index.html';
+const he = existsSync(EN) ? readFileSync(EN, 'utf8') : '';
+const enKB = existsSync(EN) ? +(statSync(EN).size / 1024).toFixed(1) : 0;
+check('página EN en dist/en/', he.length > 0 && /<html lang="en"/.test(he), `${enKB} KB`);
+check('cada página con su lang (es y en)', /<html lang="es"/.test(h) && /<html lang="en"/.test(he));
+check('HTML EN ≤ 100 KB', enKB > 0 && enKB <= 100, `${enKB} KB`);
+const hreflangs = (s) => ['hreflang="es"', 'hreflang="en"', 'hreflang="x-default"'].every((x) => s.includes(x));
+check('hreflang es/en/x-default en las 2 páginas', hreflangs(h) && hreflangs(he));
+const canon = (s) => (s.match(/<link rel="canonical" href="([^"]+)"/) || [])[1] || '';
+check('canónica de cada página', canon(h) === 'https://bernardomillan.is-a.dev/' && canon(he) === 'https://bernardomillan.is-a.dev/en/', canon(he) || 'sin /en/');
+check('conmutador ES/EN en las 2 páginas', /href="\/en\/"/.test(h) && /href="\/"/.test(he));
+check('EN íntegra (3 @font-face, reveal, 0 scripts con src)', (he.match(/@font-face/g) || []).length === 3 && (he.match(/data-reveal/g) || []).length >= 14 && !/<script[^>]+src=/.test(he));
+const refsEN = [...new Set([...he.matchAll(/(?:src|href)="(\/[^"#][^"]*)"/g)].map((m) => m[1]))];
+const rotasEN = refsEN.filter((f) => !existsSync(`dist${f}`));
+check('sin referencias locales rotas en /en/', rotasEN.length === 0, JSON.stringify(rotasEN));
 
 // ── Informe ───────────────────────────────────────────────────────────────
 console.log(`\ndist/index.html ${htmlKB} KB · carga de página ${pageMB} MB · dist total ${totalMB} MB · ${files.length} ficheros\n`);

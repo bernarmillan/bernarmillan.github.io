@@ -22,7 +22,7 @@ diseño/impresión 3D y formulario de contacto.
 | `npm install` | instala dependencias |
 | `npm run dev` | servidor de desarrollo en `localhost:4321` (`--host` para la red local) |
 | `npm run build` | build estático → `dist/` |
-| `npm run check` | **37 comprobaciones** sobre `dist/` (tamaño, sin externos, reveal, SEO…) — sale con `1` si algo falla |
+| `npm run check` | **46 comprobaciones** sobre `dist/` (tamaño, sin externos, reveal, SEO, idiomas…) — sale con `1` si algo falla |
 | `npm run preview` | sirve `dist/` en local |
 | `npm run fonts` | regenera los subconjuntos de fuentes en `public/fonts/` |
 | `npm run images` | reoptimiza las fotos a `.webp` |
@@ -36,12 +36,30 @@ diseño/impresión 3D y formulario de contacto.
 ├── public/            # assets servidos tal cual (fonts, images, projects, cv.pdf, robots, sitemap)
 ├── src/
 │   ├── components/    # Navbar, Hero, CapsuleCorp3D, Contact, Footer…
-│   ├── layouts/       # Layout.astro (head, SEO, reveal, reglas táctiles)
-│   ├── pages/         # index.astro + 404.astro
-│   └── data/          # portfolio.ts (contenido) y lqip.ts (placeholders)
+│   ├── i18n/          # ui.ts — textos de interfaz en es/en
+│   ├── layouts/       # Layout.astro (head, SEO, hreflang, reveal, reglas táctiles)
+│   ├── pages/         # index.astro (es), en/index.astro (en) y 404.astro
+│   └── data/          # portfolio.ts (contenido es/en) y lqip.ts (placeholders)
 ├── scripts/           # check-dist.mjs, make-icons.mjs, make-og.mjs, copy-fonts…
 └── .github/workflows/ # deploy a GitHub Pages con quality gate
 ```
+
+## Idiomas
+
+El sitio existe en dos idiomas con **URLs propias** (no es un traductor en cliente):
+
+| Idioma | URL |
+| --- | --- |
+| Español (por defecto) | `https://bernardomillan.is-a.dev/` |
+| Inglés | `https://bernardomillan.is-a.dev/en/` |
+
+- El botón **EN / ES** de la navbar es un enlace normal: funciona sin JavaScript y sin
+  recarga extra (cada página se sirve completa).
+- `<html lang>`, `hreflang` (`es`, `en`, `x-default`), canónica, `og:locale` y el JSON-LD
+  salen en el idioma de cada página → Google sirve la versión correcta y no las considera
+  duplicadas.
+- El contenido bilingüe vive en `src/data/portfolio.ts` y `src/i18n/ui.ts`; las traducciones
+  están tipadas (`const en: typeof es`), así que **si falta una cadena, no compila**.
 
 ## Despliegue
 
@@ -59,7 +77,7 @@ Si un check falla, **no se despliega**.
 - *Fade* de carga escalonado (PC 10 px/1 s · táctil 5 px/0,6 s, curva *ease-out-sine*) con
   red de seguridad a los 2,5 s si el JS no llega a ejecutarse.
 - Respeta `prefers-reduced-motion`.
-- Comprobaciones automáticas: `npm run check` (37) — es la puerta de salida del deploy.
+- Comprobaciones automáticas: `npm run check` (46) — es la puerta de salida del deploy.
 
 ## Licencia
 

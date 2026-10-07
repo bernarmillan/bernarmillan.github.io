@@ -1,14 +1,14 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Navbar from '../components/Navbar.astro';
-import Hero from '../components/Hero.astro';
-import CapsuleCorp3D from '../components/CapsuleCorp3D.astro';
-import Contact from '../components/Contact.astro';
-import Footer from '../components/Footer.astro';
-import { getPortfolio } from '../data/portfolio';
+// Versión INGLESA del portfolio: misma estructura que `/`, otro idioma.
+import Layout from '../../layouts/Layout.astro';
+import Navbar from '../../components/Navbar.astro';
+import Hero from '../../components/Hero.astro';
+import CapsuleCorp3D from '../../components/CapsuleCorp3D.astro';
+import Contact from '../../components/Contact.astro';
+import Footer from '../../components/Footer.astro';
+import { getPortfolio } from '../../data/portfolio';
 
-// Versión ESPAÑOLA: la raíz del sitio es el idioma por defecto (hreflang x-default).
-const lang = 'es' as const;
+const lang = 'en' as const;
 const { personalInfo } = getPortfolio(lang);
 ---
 
@@ -20,10 +20,10 @@ const { personalInfo } = getPortfolio(lang);
     <!-- 2. First Viewport: min 100dvh (Hero + Photo + 3 CV Pillars), crece si el contenido no cabe -->
     <Hero lang={lang} />
 
-    <!-- 3. Showcase Proyectos 3D: Capsule Corp 3D (@capsulecorp.3d) Lookbook -->
+    <!-- 3. Showcase 3D Projects: Capsule Corp 3D (@capsulecorp.3d) Lookbook -->
     <CapsuleCorp3D lang={lang} />
 
-    <!-- 4. Contacto Directo & CV -->
+    <!-- 4. Direct Contact & CV -->
     <Contact 
       email={personalInfo.email}
       linkedin={personalInfo.linkedin}
